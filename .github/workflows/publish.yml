@@ -1,0 +1,96 @@
+name: Publish calendar
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6 * * *'
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: calendar-feed
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Generate ICS feed
+        run: npm run publish
+        env:
+          OUTPUT_FILE_PATH: dist/output/stjosephsps.ics
+
+      - name: Publish ICS to dedicated feed branch
+        env:
+          FEED_BRANCH: calendar-feed
+          FEED_FILE: stjosephsps.ics
+        run: |
+          set -euo pipefail
+
+          worktree_dir="$(mktemp -d)"
+          cleanup() {
+            git worktree remove --force "$worktree_dir" >/dev/null 2>&1 || true
+          }
+          trap cleanup EXIT
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git fetch origin "$FEED_BRANCH" || true
+
+          if git show-ref --verify --quiet "refs/remotes/origin/$FEED_BRANCH"; then
+            git worktree add --force "$worktree_dir" "origin/$FEED_BRANCH"
+            (
+              cd "$worktree_dir"
+              git switch -C "$FEED_BRANCH"
+            )
+          else
+            git worktree add --detach "$worktree_dir"
+            (
+              cd "$worktree_dir"
+              git switch --orphan "$FEED_BRANCH"
+            )
+          fi
+
+          (
+            cd "$worktree_dir"
+            git rm -rf . >/dev/null 2>&1 || true
+            find . -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
+            cp "$GITHUB_WORKSPACE/dist/output/$FEED_FILE" "$FEED_FILE"
+            git add "$FEED_FILE"
+
+            if git diff --cached --quiet; then
+              echo "No feed changes to publish."
+              exit 0
+            fi
+
+            git commit -m "Update calendar feed"
+            git push origin "HEAD:$FEED_BRANCH"
+          )

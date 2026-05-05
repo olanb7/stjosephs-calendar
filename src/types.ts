@@ -51,14 +51,10 @@ export interface FeedPublisher {
 
 export interface AppConfig {
   allowInsecureTls: boolean;
-  blobConnectionString?: string;
-  blobContainer: string;
-  blobName: string;
   calendarBaseUrl: string;
   calendarMonthsToFetch: number;
   calendarTimezone: string;
   calendarUserAgent: string;
-  dailySchedule: string;
   feedName: string;
   outputFilePath: string;
   publicFeedBaseUrl?: string;

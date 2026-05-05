@@ -1,6 +1,6 @@
 # stjosephspta-calendar
 
-Daily Azure Functions job that scrapes the public St Joseph's Primary School ASP.NET calendar and republishes it as a stable public iCal feed.
+Scheduled GitHub Actions job that scrapes the public St Joseph's Primary School ASP.NET calendar and republishes it as a stable public iCal feed on a dedicated public GitHub branch.
 
 ## What it does
 
@@ -9,48 +9,49 @@ Daily Azure Functions job that scrapes the public St Joseph's Primary School ASP
 - follows each event postback to reach the detail pane with exact start/end date-times
 - normalizes and deduplicates events
 - generates an `.ics` feed
-- publishes the feed to Azure Blob Storage so parents get a stable subscribe URL
+- writes the feed to disk for local use or branch-based publishing
 
 ## Stack
 
 - **Runtime:** Node.js + TypeScript
-- **Serverless host:** Azure Functions Timer Trigger
-- **Public feed storage:** Azure Blob Storage
-- **Infrastructure as code:** Bicep
-- **CI/CD:** GitHub Actions with Azure login via OIDC
+- **Automation:** GitHub Actions
+- **Public feed hosting:** dedicated public GitHub branch
 
 ## Project layout
 
 - `src/app/` orchestration logic
 - `src/source/` ASP.NET client and HTML parsers
 - `src/feed/` iCal generation
-- `src/publish/` feed publishing backends
-- `src/functions/` Azure Functions entrypoints
-- `infra/` Azure Bicep templates
-- `.github/workflows/` CI and deploy automation
+- `src/publish/` local file publishing
+- `.github/workflows/` CI and branch publishing automation
 
 ## Local development
 
-1. Copy `local.settings.example.json` to `local.settings.json` and adjust values as needed.
-2. Install dependencies:
+1. Install dependencies:
 
 ```bash
 npm ci
 ```
 
-3. Run the scraper without publishing to Azure:
+2. Run the scraper without publishing:
 
 ```bash
 npm run scrape
 ```
 
-4. Run a full local publish. Without blob credentials it writes to `dist/output/stjosephsps.ics`:
+3. Run a full local publish:
 
 ```bash
 npm run publish
 ```
 
-5. Run tests and build:
+By default this writes `dist/output/stjosephsps.ics`. Override `OUTPUT_FILE_PATH` if you want a different target:
+
+```bash
+OUTPUT_FILE_PATH=public/stjosephsps.ics npm run publish
+```
+
+4. Run tests and build:
 
 ```bash
 npm run lint
@@ -58,57 +59,37 @@ npm test
 npm run build
 ```
 
-## Azure deployment
+## Public branch deployment
 
-### Required GitHub repository secrets
+The feed is published by `.github/workflows/publish.yml`.
 
-- `AZURE_CLIENT_ID`
-- `AZURE_TENANT_ID`
-- `AZURE_SUBSCRIPTION_ID`
+It runs:
 
-These should come from an Azure Entra app/service principal configured for GitHub OIDC.
+1. on a daily schedule
+2. on manual dispatch
+3. on pushes to `main`
 
-### Required GitHub repository variables
-
-- `AZURE_LOCATION`
-- `AZURE_RESOURCE_GROUP`
-- `AZURE_NAME_PREFIX`
-- `AZURE_FUNCTION_APP_NAME`
-- `AZURE_STORAGE_ACCOUNT_NAME`
-
-Optional:
-
-- `FEED_CONTAINER_NAME`
-- `FEED_BLOB_NAME`
-
-### What the deploy workflow does
+The workflow:
 
 1. installs dependencies
 2. lints, tests, and builds the project
-3. logs into Azure using OIDC
-4. ensures the resource group exists
-5. runs `infra/main.bicep`
-6. zips the built Function App payload
-7. deploys the package to Azure Functions
+3. generates `dist/output/stjosephsps.ics`
+4. force-updates the dedicated `calendar-feed` branch with the generated ICS file
 
-The Bicep template provisions:
+### Repository setup
 
-- one storage account
-- one public blob container for the ICS file
-- one Application Insights instance
-- one Linux consumption Function App
+Keep the repository public so the raw branch URL stays accessible. No GitHub Pages setup is required.
 
-## Subscription URL
+### Subscription URL
 
-After deployment, the public feed URL is:
+After the first successful deployment, the feed URL will be:
 
 ```text
-https://<storage-account>.blob.core.windows.net/<container>/<blob-name>
+https://raw.githubusercontent.com/<owner>/<repo>/calendar-feed/stjosephsps.ics
 ```
-
-The exact URL is also emitted by the deploy workflow from the Bicep outputs.
 
 ## Notes
 
-- The source school site currently needs relaxed TLS verification in this environment; production should keep `ALLOW_INSECURE_TLS=false` unless the source certificate chain forces a temporary exception.
+- The source school site currently needs relaxed TLS verification in this environment; keep `ALLOW_INSECURE_TLS=false` unless the source certificate chain forces a temporary exception.
 - Multi-day events appear on multiple days in the month view, so the scraper deduplicates by stable event identity before generating the feed.
+- This approach keeps everything on GitHub Free, but GitHub controls the caching headers on `raw.githubusercontent.com`.

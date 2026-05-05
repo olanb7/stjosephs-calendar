@@ -1,7 +1,7 @@
 import { parseSchoolDateTime } from '../date-time.js';
 import { buildIcs } from '../feed/ics.js';
 import { stableHash } from '../hash.js';
-import { createPublisher } from '../publish/blob.js';
+import { createPublisher } from '../publish/file.js';
 import { AspNetCalendarClient } from '../source/aspnet.js';
 import { parseEventDetails, parseMonthView } from '../source/parsers.js';
 import type { AppConfig, CalendarEvent, MonthView, RawCalendarEvent } from '../types.js';
