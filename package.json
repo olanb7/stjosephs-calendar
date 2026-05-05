@@ -1,0 +1,44 @@
+{
+  "name": "stjosephspta-calendar",
+  "version": "0.1.0",
+  "description": "Daily Azure Function that scrapes the St Josephs PS calendar and publishes a public ICS feed",
+  "main": "dist/src/functions/*.js",
+  "scripts": {
+    "test": "vitest run",
+    "build": "tsc -p tsconfig.build.json",
+    "clean": "rm -rf dist coverage",
+    "test:watch": "vitest",
+    "lint": "eslint .",
+    "start": "npm run build && func start",
+    "scrape": "tsx src/dev/run-scrape.ts",
+    "publish": "tsx src/dev/run-publish.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@azure/functions": "^4.14.0",
+    "@azure/storage-blob": "^12.31.0",
+    "axios": "^1.16.0",
+    "cheerio": "^1.0.0",
+    "ical-generator": "^10.2.0",
+    "luxon": "^3.7.2",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@types/luxon": "^3.7.1",
+    "@types/node": "^20.17.57",
+    "eslint": "^9.39.1",
+    "globals": "^15.15.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.43.0",
+    "vitest": "^2.1.9"
+  }
+}

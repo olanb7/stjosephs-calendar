@@ -1,0 +1,92 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
+      AZURE_RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP }}
+      AZURE_FUNCTION_APP_NAME: ${{ vars.AZURE_FUNCTION_APP_NAME }}
+      AZURE_STORAGE_ACCOUNT_NAME: ${{ vars.AZURE_STORAGE_ACCOUNT_NAME }}
+      AZURE_NAME_PREFIX: ${{ vars.AZURE_NAME_PREFIX }}
+      FEED_BLOB_NAME: ${{ vars.FEED_BLOB_NAME || 'stjosephsps.ics' }}
+      FEED_CONTAINER_NAME: ${{ vars.FEED_CONTAINER_NAME || 'calendar' }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Ensure resource group exists
+        run: |
+          az group create \
+            --name "$AZURE_RESOURCE_GROUP" \
+            --location "$AZURE_LOCATION"
+
+      - name: Provision infrastructure
+        id: infra
+        run: |
+          az deployment group create \
+            --resource-group "$AZURE_RESOURCE_GROUP" \
+            --template-file infra/main.bicep \
+            --parameters \
+              namePrefix="$AZURE_NAME_PREFIX" \
+              functionAppName="$AZURE_FUNCTION_APP_NAME" \
+              storageAccountName="$AZURE_STORAGE_ACCOUNT_NAME" \
+              feedContainerName="$FEED_CONTAINER_NAME" \
+              feedBlobName="$FEED_BLOB_NAME" \
+              location="$AZURE_LOCATION" \
+            --query properties.outputs \
+            --output json > deployment-outputs.json
+
+          echo "function_app_name=$(jq -r '.functionAppName.value' deployment-outputs.json)" >> "$GITHUB_OUTPUT"
+          echo "public_feed_url=$(jq -r '.publicFeedUrl.value' deployment-outputs.json)" >> "$GITHUB_OUTPUT"
+
+      - name: Prepare deploy package
+        run: |
+          npm prune --omit=dev
+          zip -r functionapp.zip dist host.json package.json node_modules .funcignore
+
+      - name: Deploy Function App
+        run: |
+          az functionapp deployment source config-zip \
+            --resource-group "$AZURE_RESOURCE_GROUP" \
+            --name "${{ steps.infra.outputs.function_app_name }}" \
+            --src functionapp.zip
+
+      - name: Publish feed URL summary
+        run: echo "Public ICS URL: ${{ steps.infra.outputs.public_feed_url }}"

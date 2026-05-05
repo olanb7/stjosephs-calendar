@@ -1,0 +1,6 @@
+/dist
+/.azure
+node_modules
+.env
+.env.*
+coverage

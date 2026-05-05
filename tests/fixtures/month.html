@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+  <body>
+    <form id="form1" method="post" action="/Calendar">
+      <input type="hidden" name="__VIEWSTATE" value="viewstate-token" />
+      <input type="hidden" name="__EVENTVALIDATION" value="eventvalidation-token" />
+      <input type="hidden" name="__VIEWSTATEGENERATOR" value="generator-token" />
+
+      <div id="MainContent_ctlCalendar_updCalendar">
+        <div class="MainHeader">
+          <div class="PrevMonth">
+            <a
+              id="MainContent_ctlCalendar_repCalendar_lnkPrevMonth"
+              href="javascript:__doPostBack('ctl00$MainContent$ctlCalendar$repCalendar$ctl00$lnkPrevMonth','')"
+              >Apr</a
+            >
+          </div>
+          <div class="CurrentMonth">
+            <span id="MainContent_ctlCalendar_repCalendar_lblCurrentMonth">May 2026</span>
+          </div>
+          <div class="NextMonth">
+            <a
+              id="MainContent_ctlCalendar_repCalendar_lnkNextMonth"
+              href="javascript:__doPostBack('ctl00$MainContent$ctlCalendar$repCalendar$ctl00$lnkNextMonth','')"
+              >Jun</a
+            >
+          </div>
+        </div>
+
+        <div class="CalendarDay Monday">
+          <a class="DayDate ActiveDay" href="javascript:__doPostBack('ctl00$MainContent$ctlCalendar$repCalendar$ctl08$lnkDayDate','')">4</a>
+          <div class="DayEvents">
+            <a class="EventLink" href="javascript:__doPostBack('ctl00$MainContent$ctlCalendar$repCalendar$ctl08$ctl00','')">
+              Early May Bank Holidays (School Closed)
+            </a>
+          </div>
+        </div>
+
+        <div class="CalendarDay Saturday">
+          <a class="DayDate ActiveDay" href="javascript:__doPostBack('ctl00$MainContent$ctlCalendar$repCalendar$ctl20$lnkDayDate','')">16</a>
+          <div class="DayEvents">
+            <a class="EventLink" href="javascript:__doPostBack('ctl00$MainContent$ctlCalendar$repCalendar$ctl20$ctl00','')">
+              First Holy Communion
+            </a>
+          </div>
+        </div>
+      </div>
+    </form>
+  </body>
+</html>
