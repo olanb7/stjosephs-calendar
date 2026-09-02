@@ -6,6 +6,87 @@ NAME:St Joseph's Primary School Calendar
 X-WR-CALNAME:St Joseph's Primary School Calendar
 TIMEZONE-ID:Europe/London
 X-WR-TIMEZONE:Europe/London
+BEGIN:VEVENT
+UID:stjosephsps-f0b5a1d4760ae35b88c7a46532696c88@olanb7
+SEQUENCE:0
+DTSTAMP:20260902T140711
+DTSTART;TZID=Europe/London:20260910T083000
+DTEND;TZID=Europe/London:20260910T093000
+SUMMARY:Start of Year Mass
+DESCRIPTION:More info: https://www.stjosephsps.co.uk/Calendar
+URL;VALUE=URI:https://www.stjosephsps.co.uk/Calendar
+END:VEVENT
+BEGIN:VEVENT
+UID:stjosephsps-1c2b0c2cbd3b7b32d1ff803e3847e6bb@olanb7
+SEQUENCE:0
+DTSTAMP:20260902T140711
+DTSTART;TZID=Europe/London:20260917T080000
+DTEND;TZID=Europe/London:20260917T140000
+SUMMARY:School Photographer
+DESCRIPTION:More info: https://www.stjosephsps.co.uk/Calendar
+URL;VALUE=URI:https://www.stjosephsps.co.uk/Calendar
+END:VEVENT
+BEGIN:VEVENT
+UID:stjosephsps-31b0ffc67261f4a83ced30913d3420b8@olanb7
+SEQUENCE:0
+DTSTAMP:20260902T140711
+DTSTART;TZID=Europe/London:20260918T110000
+DTEND;TZID=Europe/London:20260918T110000
+SUMMARY:SEAG Registration Portal Closes
+DESCRIPTION:More info: https://www.stjosephsps.co.uk/Calendar
+URL;VALUE=URI:https://www.stjosephsps.co.uk/Calendar
+END:VEVENT
+BEGIN:VEVENT
+UID:stjosephsps-eee9f3c0f6ebc566baf27086c6ec7bf0@olanb7
+SEQUENCE:0
+DTSTAMP:20260902T140711
+DTSTART;TZID=Europe/London:20260924T173000
+DTEND;TZID=Europe/London:20260924T183000
+SUMMARY:P1 PTA Welcome Evening
+DESCRIPTION:More info: https://www.stjosephsps.co.uk/Calendar
+URL;VALUE=URI:https://www.stjosephsps.co.uk/Calendar
+END:VEVENT
+BEGIN:VEVENT
+UID:stjosephsps-ee1a185c9c32bbd44efa882db1b08cf9@olanb7
+SEQUENCE:0
+DTSTAMP:20260902T140711
+DTSTART;TZID=Europe/London:20261019T183000
+DTEND;TZID=Europe/London:20261019T193000
+SUMMARY:PTA AGM
+DESCRIPTION:More info: https://www.stjosephsps.co.uk/Calendar
+URL;VALUE=URI:https://www.stjosephsps.co.uk/Calendar
+END:VEVENT
+BEGIN:VEVENT
+UID:stjosephsps-4bedb550e72c77cdd2f9351998b9bdba@olanb7
+SEQUENCE:0
+DTSTAMP:20260902T140711
+DTSTART;TZID=Europe/London:20261020T080000
+DTEND;TZID=Europe/London:20261020T140000
+SUMMARY:P7 Parent/Teacher Meetings
+DESCRIPTION:Parochial Hall\n\nMore info: https://www.stjosephsps.co.uk/Cal
+ endar
+URL;VALUE=URI:https://www.stjosephsps.co.uk/Calendar
+END:VEVENT
+BEGIN:VEVENT
+UID:stjosephsps-dd244467c8ea76fc005ef7b587ab1140@olanb7
+SEQUENCE:0
+DTSTAMP:20260902T140711
+DTSTART;TZID=Europe/London:20261022T173000
+DTEND;TZID=Europe/London:20261022T183000
+SUMMARY:Halloween Disco (P4-7)
+DESCRIPTION:More info: https://www.stjosephsps.co.uk/Calendar
+URL;VALUE=URI:https://www.stjosephsps.co.uk/Calendar
+END:VEVENT
+BEGIN:VEVENT
+UID:stjosephsps-03204f5d1dd6214b00c7e1f569ecf36d@olanb7
+SEQUENCE:0
+DTSTAMP:20260902T140711
+DTSTART;TZID=Europe/London:20261026T090000
+DTEND;TZID=Europe/London:20261030T150000
+SUMMARY:Mid Term Break
+DESCRIPTION:More info: https://www.stjosephsps.co.uk/Calendar
+URL;VALUE=URI:https://www.stjosephsps.co.uk/Calendar
+END:VEVENT
 X-WR-CALNAME:St Joseph's Primary School Calendar
 X-WR-TIMEZONE:Europe/London
 END:VCALENDAR
