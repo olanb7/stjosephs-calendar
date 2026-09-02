@@ -6,12 +6,18 @@ export function parseSchoolDateTime(date: string, time: string | undefined, time
 
   const format = normalizedTime ? 'dd-MMM-yy HH:mm' : 'dd-MMM-yy';
   const value = normalizedTime ? `${normalizedDate} ${normalizedTime}` : normalizedDate;
-  const parsed = DateTime.fromFormat(value, format, {
+  const parsedWithGbLocale = DateTime.fromFormat(value, format, {
     locale: 'en-GB',
     zone: timezone,
   });
+  const parsed = parsedWithGbLocale.isValid
+    ? parsedWithGbLocale
+    : DateTime.fromFormat(value, format, {
+        locale: 'en',
+        zone: timezone,
+      });
 
-  if (!parsed.isValid) {
+  if (!parsed?.isValid) {
     throw new Error(`Unable to parse date/time "${value}" in timezone "${timezone}"`);
   }
 
