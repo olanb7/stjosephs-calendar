@@ -1,8 +1,11 @@
 import { DateTime } from 'luxon';
 
 export function parseSchoolDateTime(date: string, time: string | undefined, timezone: string): Date {
-  const format = time ? 'dd-MMM-yy HH:mm' : 'dd-MMM-yy';
-  const value = time ? `${date} ${time}` : date;
+  const normalizedDate = date.replace(/\s+/g, '-').replace(/-{2,}/g, '-').trim();
+  const normalizedTime = time?.trim();
+
+  const format = normalizedTime ? 'dd-MMM-yy HH:mm' : 'dd-MMM-yy';
+  const value = normalizedTime ? `${normalizedDate} ${normalizedTime}` : normalizedDate;
   const parsed = DateTime.fromFormat(value, format, {
     locale: 'en-GB',
     zone: timezone,
