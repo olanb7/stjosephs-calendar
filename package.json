@@ -9,7 +9,8 @@
     "test:watch": "vitest",
     "lint": "eslint .",
     "scrape": "tsx src/dev/run-scrape.ts",
-    "publish": "tsx src/dev/run-publish.ts"
+    "publish": "tsx src/dev/run-publish.ts",
+    "validate:ics": "tsx src/dev/validate-ics.ts"
   },
   "keywords": [],
   "author": "",
