@@ -3,14 +3,25 @@ import ical, { ICalCalendarMethod } from 'ical-generator';
 import type { AppConfig, CalendarEvent } from '../types.js';
 import { normalizeIcsLineEndings, validateIcsContentLines } from './validation.js';
 
-const UNSAFE_ICS_TEXT_PATTERN = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g;
+function stripUnsafeIcsControlCharacters(value: string): string {
+  return Array.from(value, (character) => {
+    const codePoint = character.codePointAt(0);
+
+    if (codePoint === undefined) {
+      return '';
+    }
+
+    const isUnsafeControlCharacter =
+      codePoint === 0x7f || (codePoint < 0x20 && codePoint !== 0x09 && codePoint !== 0x0a && codePoint !== 0x0d);
+
+    return isUnsafeControlCharacter ? ' ' : character;
+  }).join('');
+}
 
 function sanitizeIcsText(value: string | undefined): string | undefined {
   const sanitized = value
-    ?.replace(/\r\n?/g, ' ')
-    .replace(UNSAFE_ICS_TEXT_PATTERN, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
+    ? stripUnsafeIcsControlCharacters(value).replace(/\r\n?/g, ' ').replace(/\t/g, ' ').replace(/\n/g, ' ').replace(/\s+/g, ' ').trim()
+    : undefined;
 
   return sanitized ? sanitized : undefined;
 }
