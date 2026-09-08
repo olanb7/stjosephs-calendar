@@ -47,6 +47,11 @@ jobs:
         env:
           OUTPUT_FILE_PATH: dist/output/stjosephsps.ics
 
+      - name: Validate generated ICS feed
+        run: npm run validate:ics
+        env:
+          OUTPUT_FILE_PATH: dist/output/stjosephsps.ics
+
       - name: Publish ICS to dedicated feed branch
         env:
           FEED_BRANCH: calendar-feed
